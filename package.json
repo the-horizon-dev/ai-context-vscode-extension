@@ -1,0 +1,61 @@
+{
+  "name": "copy-project-context",
+  "displayName": "Copy Project Context",
+  "description": "An easy-to-use tool for Visual Studio Code that allows you to quickly copy your project's structure and files, making it convenient to use as context for interacting with your favorite AI model or other purposes.",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.96.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "copy-project-context.execute",
+        "title": "Copy Project Context"
+      },
+      {
+        "command": "copy-project-context.addToContext",
+        "title": "Add to Context"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "copy-project-context.addToContext",
+          "when": "explorerResourceIsFolder == false",
+          "group": "navigation@9999"
+        },
+        {
+          "command": "copy-project-context.execute",
+          "when": "explorerResourceIsFolder == true",
+          "group": "navigation@9999"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.96.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "@typescript-eslint/eslint-plugin": "^8.17.0",
+    "@typescript-eslint/parser": "^8.17.0",
+    "eslint": "^9.16.0",
+    "typescript": "^5.7.2",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1"
+  }
+}
