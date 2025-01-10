@@ -1,71 +1,68 @@
-# copy-project-context README
+# Copy Project Context
 
-This is the README for your extension "copy-project-context". After writing up a brief description, we recommend including the following sections.
+A Visual Studio Code extension that simplifies copying file contents as formatted code blocks, perfect for sharing context with AI models or in documentation.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+- **Easy File Selection**: Right-click any file and select "Add to Context" to include it in your clipboard collection.
+- **Smart Language Detection**: Automatically detects and formats code blocks based on file extensions:
+  - `.ts` → ```typescript
+  - `.js` → ```javascript
+  - `.json` → ```json
+  - `.md` → ```markdown
+  - `.py` → ```python
+  - `.html` → ```html
+  - `.css` → ```css
+  - Other files → ```plaintext
 
-For example if there is an image subfolder under your extension project workspace:
+- **Bulk Copy**: Right-click any folder to "Copy Project Context" and get all selected files formatted and ready to paste.
+- **Clean Output**: Files are wrapped in appropriate language code blocks, perfect for documentation or AI interactions.
 
-\!\[feature X\]\(images/feature-x.png\)
+## Usage
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+1. **Adding Files**:
+   - Right-click any file in the explorer
+   - Select "Add to Context"
+   - Repeat for all files you want to include
+
+2. **Copying Everything**:
+   - Right-click any folder or empty space in the explorer
+   - Select "Copy Project Context"
+   - All previously added files will be formatted and copied to your clipboard
+
+3. **Pasting**:
+   - Use Ctrl+V (Cmd+V on macOS) anywhere to paste your formatted context
+   - Each file will be properly formatted with language-specific code blocks
+
+## Example Output
+
+```typescript
+// example.ts
+interface User {
+    name: string;
+    age: number;
+}
+```
+
+```javascript
+// utils.js
+function formatDate(date) {
+    return date.toISOString();
+}
+```
 
 ## Requirements
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
-
-## Extension Settings
-
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
-
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+- Visual Studio Code version 1.96.0 or higher
 
 ## Known Issues
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+None reported. Please submit issues on our GitHub repository.
 
-## Release Notes
+## Contributing
 
-Users appreciate release notes as you update your extension.
+Feel free to submit pull requests or create issues for bugs and feature requests.
 
-### 1.0.0
+## License
 
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+MIT
