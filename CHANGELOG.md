@@ -22,3 +22,9 @@
 ### Added
 
 - Added a extension video demo to the README.
+
+## [0.0.8] - 2025-01-11
+
+### Added
+
+- First release of the extension.
