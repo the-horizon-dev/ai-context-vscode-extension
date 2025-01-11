@@ -52,6 +52,17 @@
         "title": "Remove All Files from Project Context"
       }
     ],
+    "configuration": {
+      "type": "object",
+      "title": "Copy Project Context Settings",
+      "properties": {
+        "copyProjectContext.clearAfterCopy": {
+          "type": "boolean",
+          "default": true,
+          "description": "When true, automatically clear the context after copying."
+        }
+      }
+    },
     "menus": {
       "explorer/context": [
         {

@@ -1,9 +1,16 @@
 # Change Log
 
-All notable changes to the "copy-project-context" extension will be documented in this file.
+## [0.0.1] - 2025-01-10
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+- Added support for adding files to the context.
+- Added support for removing files from the context.
+- Added support for listing files in the context.
+- Added support for clearing the context.
 
-## [Unreleased]
+## [0.0.6] - 2025-01-11
 
-- Initial release
+### Added
+
+- Added support for adding multiple files at once to the context.
+- Added tests for adding multiple files and handling duplicates.
+- Improved error handling and user feedback for file operations.
