@@ -36,19 +36,22 @@ A Visual Studio Code extension that simplifies copying file contents as formatte
 
 ## Example Output
 
+```markdown
+# Project Structure
+├── src
+│   ├── extension.ts
+│   └── test
+│       └── extension.test.ts
+├── package.json
+└── README.md
+
+### File: src/extension.ts
 ```typescript
-// example.ts
-interface User {
-    name: string;
-    age: number;
+interface ContextFile {
+    path: string;
+    language: string;
 }
 ```
-
-```javascript
-// utils.js
-function formatDate(date) {
-    return date.toISOString();
-}
 ```
 
 ## Requirements

@@ -8,14 +8,22 @@ suite('Copy Project Context Extension', () => {
     
     suiteSetup(async () => {
         await fs.mkdir(testWorkspace, { recursive: true });
+        // Create a workspace and open it
+        await vscode.commands.executeCommand('vscode.openFolder', vscode.Uri.file(testWorkspace));
+        // Wait for extension to activate
+        await new Promise(resolve => setTimeout(resolve, 2000));
     });
 
     setup(async () => {
+        // Clear previous state
+        await vscode.env.clipboard.writeText('');
+        
         // Reset files before each test
         await fs.writeFile(path.join(testWorkspace, 'test.ts'), 'const x: number = 1;');
         await fs.writeFile(path.join(testWorkspace, 'test.js'), 'const y = 2;');
-        // Clear clipboard
-        await vscode.env.clipboard.writeText('');
+        
+        // Ensure files are created
+        await new Promise(resolve => setTimeout(resolve, 100));
     });
 
     suiteTeardown(async () => {
@@ -64,5 +72,75 @@ suite('Copy Project Context Extension', () => {
         await vscode.commands.executeCommand('copy-project-context.execute');
         const clipboardContent = await vscode.env.clipboard.readText();
         assert.strictEqual(clipboardContent, '', 'Clipboard should be empty when no files in context');
+    });
+
+    test('Project structure and file content', async () => {
+        const tsFile = vscode.Uri.file(path.join(testWorkspace, 'test.ts'));
+        await vscode.commands.executeCommand('copy-project-context.addToContext', tsFile);
+        await vscode.commands.executeCommand('copy-project-context.execute');
+        
+        const clipboardContent = await vscode.env.clipboard.readText();
+        
+        assert.ok(clipboardContent.includes('# Project Structure'));
+        assert.ok(clipboardContent.includes('# Copied Context'));
+        assert.ok(clipboardContent.includes('### File: '));
+        assert.ok(clipboardContent.includes('```typescript'));
+    });
+
+    test('Prevent duplicate files in context', async () => {
+        const tsFile = vscode.Uri.file(path.join(testWorkspace, 'test.ts'));
+        
+        // Add file first time
+        await vscode.commands.executeCommand('copy-project-context.addToContext', tsFile);
+        
+        // Try to add same file again
+        await vscode.commands.executeCommand('copy-project-context.addToContext', tsFile);
+        
+        // Copy and verify only one instance exists
+        await vscode.commands.executeCommand('copy-project-context.execute');
+        const clipboardContent = await vscode.env.clipboard.readText();
+        
+        const matches = clipboardContent.match(/```typescript/g) || [];
+        assert.strictEqual(matches.length, 1, 'File should appear only once in context');
+    });
+
+    test('Content reflects latest changes', async () => {
+        const tsFile = vscode.Uri.file(path.join(testWorkspace, 'test.ts'));
+        
+        // Add file to context
+        await vscode.commands.executeCommand('copy-project-context.addToContext', tsFile);
+        
+        // Modify file content
+        await fs.writeFile(tsFile.fsPath, 'const updated: number = 42;');
+        
+        // Copy and verify updated content
+        await vscode.commands.executeCommand('copy-project-context.execute');
+        const clipboardContent = await vscode.env.clipboard.readText();
+        
+        assert.ok(clipboardContent.includes('const updated: number = 42;'), 'Should contain updated content');
+    });
+
+    test('Remove file from context', async () => {
+        const tsFile = vscode.Uri.file(path.join(testWorkspace, 'test.ts'));
+        
+        await vscode.commands.executeCommand('copy-project-context.addToContext', tsFile);
+        await vscode.commands.executeCommand('copy-project-context.removeFromContext', tsFile);
+        await vscode.commands.executeCommand('copy-project-context.execute');
+        
+        const clipboardContent = await vscode.env.clipboard.readText();
+        assert.ok(!clipboardContent.includes('```typescript'), 'Removed file should not appear in context');
+    });
+
+    test('File size limit', async () => {
+        const largeFile = path.join(testWorkspace, 'large.ts');
+        // Create a file larger than 1MB
+        await fs.writeFile(largeFile, 'x'.repeat(1024 * 1024 + 1));
+        
+        const uri = vscode.Uri.file(largeFile);
+        await vscode.commands.executeCommand('copy-project-context.addToContext', uri);
+        
+        await vscode.commands.executeCommand('copy-project-context.execute');
+        const clipboardContent = await vscode.env.clipboard.readText();
+        assert.ok(!clipboardContent.includes('large.ts'), 'Large file should not be added to context');
     });
 });

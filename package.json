@@ -22,6 +22,10 @@
       {
         "command": "copy-project-context.addToContext",
         "title": "Add to Context"
+      },
+      {
+        "command": "copy-project-context.removeFromContext",
+        "title": "Remove from Context"
       }
     ],
     "menus": {
@@ -34,6 +38,11 @@
         {
           "command": "copy-project-context.execute",
           "when": "explorerResourceIsFolder == true",
+          "group": "navigation@9999"
+        },
+        {
+          "command": "copy-project-context.removeFromContext",
+          "when": "explorerResourceIsFolder == false",
           "group": "navigation@9999"
         }
       ]
