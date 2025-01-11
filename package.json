@@ -41,11 +41,15 @@
       },
       {
         "command": "copy-project-context.addToContext",
-        "title": "Add to Context"
+        "title": "Add File Content to Project Context"
       },
       {
         "command": "copy-project-context.removeFromContext",
-        "title": "Remove from Context"
+        "title": "Remove File Content from Project Context"
+      },
+      {
+        "command": "copy-project-context.removeAllFromContext",
+        "title": "Remove All Files from Project Context"
       }
     ],
     "menus": {
@@ -62,6 +66,11 @@
         },
         {
           "command": "copy-project-context.removeFromContext",
+          "when": "explorerResourceIsFolder == false",
+          "group": "navigation@9999"
+        },
+        {
+          "command": "copy-project-context.removeAllFromContext",
           "when": "explorerResourceIsFolder == false",
           "group": "navigation@9999"
         }

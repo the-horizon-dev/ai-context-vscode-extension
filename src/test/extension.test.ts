@@ -36,6 +36,7 @@ suite('Copy Project Context Extension', () => {
         const commands = await vscode.commands.getCommands();
         assert.ok(commands.includes('copy-project-context.execute'), 'Execute command not registered');
         assert.ok(commands.includes('copy-project-context.addToContext'), 'Add to context command not registered');
+        assert.ok(commands.includes('copy-project-context.removeAllFromContext'), 'Remove all from context command not registered');
     });
 
     test('Add file to context', async () => {
@@ -48,6 +49,23 @@ suite('Copy Project Context Extension', () => {
         
         assert.ok(clipboardContent.includes('```typescript'));
         assert.ok(clipboardContent.includes('const x: number = 1;'));
+    });
+
+    test('Remove all files from context', async () => {
+        const tsFile = vscode.Uri.file(path.join(testWorkspace, 'test.ts'));
+        const jsFile = vscode.Uri.file(path.join(testWorkspace, 'test.js'));
+        
+        await vscode.commands.executeCommand('copy-project-context.addToContext', tsFile);
+        await vscode.commands.executeCommand('copy-project-context.addToContext', jsFile);
+        
+        // Remove all files from context
+        await vscode.commands.executeCommand('copy-project-context.removeAllFromContext');
+        
+        // Copy and verify context is empty
+        await vscode.commands.executeCommand('copy-project-context.execute');
+        const clipboardContent = await vscode.env.clipboard.readText();
+        
+        assert.strictEqual(clipboardContent, '', 'Clipboard should be empty when all files are removed from context');
     });
 
     test('Multiple file types handling', async () => {

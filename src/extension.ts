@@ -52,6 +52,15 @@ export function activate(context: vscode.ExtensionContext) {
         }
     );
 
+    const removeAllFromContextCommand = vscode.commands.registerCommand(
+        'copy-project-context.removeAllFromContext',
+        async () => {
+            projectContext.clear();
+            updateStatusBar();
+            vscode.window.showInformationMessage('All files removed from context.');
+        }
+    );
+
     const copyContextCommand = vscode.commands.registerCommand(
         'copy-project-context.execute',
         async () => {
@@ -114,7 +123,8 @@ export function activate(context: vscode.ExtensionContext) {
         statusBarItem,
         addToContextCommand,
         removeFromContextCommand,
-        copyContextCommand
+        copyContextCommand,
+        removeAllFromContextCommand
     );
 }
 
