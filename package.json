@@ -2,7 +2,7 @@
   "name": "copy-project-context-ai",
   "displayName": "Copy Project Context for AI",
   "description": "An easy-to-use tool for Visual Studio Code that allows you to quickly copy your project's structure and files, making it convenient to use as context for interacting with your favorite AI model or other purposes.",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "license": "MIT",
   "publisher": "TheHorizonAI",
   "repository": {
@@ -28,6 +28,11 @@
     "onStartupFinished"
   ],
   "main": "./out/extension.js",
+  "galleryBanner": {
+    "color": "#808080", 
+    "theme": "dark"
+  },
+  "icon": "assets/icon.png",
   "contributes": {
     "commands": [
       {

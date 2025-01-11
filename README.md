@@ -45,6 +45,8 @@ Explaining your project's structure, state, and technologies to an AI model can 
 
 ## Example Output
 
+![Example Output](images/screenshot.png)
+
 ```markdown
 # Project Structure
 ├── src
