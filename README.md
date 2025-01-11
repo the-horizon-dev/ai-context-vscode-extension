@@ -6,6 +6,10 @@ An easy-to-use Visual Studio Code extension that allows you to quickly copy your
 
 Explaining your project's structure, state, and technologies to an AI model can be time-consuming. This extension helps by allowing you to copy the project structure and files directly from the VS Code explorer. The project structure can provide valuable information about the type of project, its current state, the technologies used, and general information about it. Sometimes, this is all an AI needs to better understand your project's problems, errors, and questions.
 
+## Example
+
+![Example](assets/extension.gif)
+
 ## Features
 
 - **Easy File Selection**: Right-click any file and select "Add to Context" to include it in your clipboard collection.
@@ -42,10 +46,6 @@ Explaining your project's structure, state, and technologies to an AI model can 
 4. **Pasting**:
    - Use Ctrl+V (Cmd+V on macOS) anywhere to paste your formatted context.
    - Each file will be properly formatted with language-specific code blocks.
-
-## Example Output
-
-![Example Output](images/screenshot.png)
 
 ```markdown
 # Project Structure
