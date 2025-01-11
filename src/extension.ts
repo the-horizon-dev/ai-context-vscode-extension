@@ -7,7 +7,7 @@ import { getProjectStructure, detectFileLanguage } from './utils';
 export function activate(context: vscode.ExtensionContext) {
     const projectContext = new VSCodeProjectContext();
     const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
-    
+
     function updateStatusBar() {
         const count = projectContext.files.length;
         if (count > 0) {
@@ -18,25 +18,58 @@ export function activate(context: vscode.ExtensionContext) {
         }
     }
 
+    /**
+     * Modified "Add to Context" command to support multiple selected files
+     * and skip those that are already in the context.
+     */
     const addToContextCommand = vscode.commands.registerCommand(
         'copy-project-context.addToContext',
-        async (uri: vscode.Uri) => {
+        async (uriOrUris: vscode.Uri | vscode.Uri[]) => {
             try {
-                const stats = await fs.stat(uri.fsPath);
-                if (stats.size > MAX_FILE_SIZE) {
-                    vscode.window.showWarningMessage(`File too large: ${uri.fsPath}`);
-                    return;
+                // If the command is called with multiple selections, VS Code may pass an array of Uris.
+                // Otherwise, it will be a single Uri.
+                const uris = Array.isArray(uriOrUris) ? uriOrUris : [uriOrUris];
+
+                const alreadyInContext: string[] = [];
+                const newlyAdded: string[] = [];
+
+                for (const uri of uris) {
+                    // If already in context, skip it
+                    if (projectContext.files.includes(uri.fsPath)) {
+                        alreadyInContext.push(uri.fsPath);
+                        continue;
+                    }
+
+                    // Check file size before adding
+                    const stats = await fs.stat(uri.fsPath);
+                    if (stats.size > MAX_FILE_SIZE) {
+                        vscode.window.showWarningMessage(`File too large: ${uri.fsPath}`);
+                        continue;
+                    }
+
+                    // Attempt to add to context
+                    const added = projectContext.addFile(uri.fsPath);
+                    if (added) {
+                        newlyAdded.push(uri.fsPath);
+                    }
                 }
 
-                const added = projectContext.addFile(uri.fsPath);
-                if (!added) {
-                    vscode.window.showInformationMessage(`File already in context: ${uri.fsPath}`);
-                    return;
-                }
+                // Update status bar
                 updateStatusBar();
-                vscode.window.showInformationMessage(`Added to context: ${uri.fsPath}`);
+
+                // Show messages indicating results
+                if (alreadyInContext.length > 0) {
+                    vscode.window.showInformationMessage(
+                        `Already in context (skipped):\n${alreadyInContext.join('\n')}`
+                    );
+                }
+                if (newlyAdded.length > 0) {
+                    vscode.window.showInformationMessage(
+                        `Added to context:\n${newlyAdded.join('\n')}`
+                    );
+                }
             } catch (error) {
-                vscode.window.showErrorMessage(`Failed to add file: ${error}`);
+                vscode.window.showErrorMessage(`Failed to add file(s): ${error}`);
             }
         }
     );
@@ -82,7 +115,11 @@ export function activate(context: vscode.ExtensionContext) {
                         projectContext.files.map(async (filePath) => {
                             try {
                                 // Check file existence
-                                if (!await fs.access(filePath).then(() => true).catch(() => false)) {
+                                const exists = await fs
+                                    .access(filePath)
+                                    .then(() => true)
+                                    .catch(() => false);
+                                if (!exists) {
                                     return `\n### File: ${filePath} (not found)\n`;
                                 }
 
@@ -97,7 +134,7 @@ export function activate(context: vscode.ExtensionContext) {
                                     `\`\`\`${language}`,
                                     document.getText().trim(),
                                     '```',
-                                    ''  // Add empty line between files
+                                    '' // Add empty line between files
                                 ].join('\n');
                             } catch (error) {
                                 return `### Error reading file: ${filePath}\n${error}\n`;
@@ -111,6 +148,8 @@ export function activate(context: vscode.ExtensionContext) {
                 // Ensure proper trimming and write to clipboard
                 await vscode.env.clipboard.writeText(content.trim());
                 vscode.window.showInformationMessage('Project context copied to clipboard!');
+                
+                // Clear the context after copying
                 projectContext.clear();
                 updateStatusBar();
             } catch (error) {
@@ -123,8 +162,8 @@ export function activate(context: vscode.ExtensionContext) {
         statusBarItem,
         addToContextCommand,
         removeFromContextCommand,
-        copyContextCommand,
-        removeAllFromContextCommand
+        removeAllFromContextCommand,
+        copyContextCommand
     );
 }
 
