@@ -1,6 +1,10 @@
-# Copy Project Context
+# Copy Project Context for AI
 
-A Visual Studio Code extension that simplifies copying file contents as formatted code blocks, perfect for sharing context with AI models or in documentation.
+An easy-to-use Visual Studio Code extension that allows you to quickly copy your project's structure and files, making it convenient to use as context for interacting with your favorite AI model or other purposes.
+
+## Why Use This Extension?
+
+Explaining your project's structure, state, and technologies to an AI model can be time-consuming. This extension helps by allowing you to copy the project structure and files directly from the VS Code explorer. The project structure can provide valuable information about the type of project, its current state, the technologies used, and general information about it. Sometimes, this is all an AI needs to better understand your project's problems, errors, and questions.
 
 ## Features
 
@@ -20,19 +24,24 @@ A Visual Studio Code extension that simplifies copying file contents as formatte
 
 ## Usage
 
-1. **Adding Files**:
-   - Right-click any file in the explorer
-   - Select "Add to Context"
-   - Repeat for all files you want to include
+1. **Adding Files to Context**:
+   - Right-click any file in the explorer.
+   - Select "Add File Content to Project Context".
+   - Repeat for all files you want to include.
 
-2. **Copying Everything**:
-   - Right-click any folder or empty space in the explorer
-   - Select "Copy Project Context"
-   - All previously added files will be formatted and copied to your clipboard
+2. **Removing Files of Context**:
+   - Right-click any file in the explorer.
+   - Select "Remove File Content from Project Context".
+   - Repeat for all files you want to remove.
 
-3. **Pasting**:
-   - Use Ctrl+V (Cmd+V on macOS) anywhere to paste your formatted context
-   - Each file will be properly formatted with language-specific code blocks
+3. **Copying Project Context**:
+   - Right-click any folder or empty space in the explorer.
+   - Select "Copy Project Context".
+   - All previously added files will be formatted and copied to your clipboard.
+
+4. **Pasting**:
+   - Use Ctrl+V (Cmd+V on macOS) anywhere to paste your formatted context.
+   - Each file will be properly formatted with language-specific code blocks.
 
 ## Example Output
 
@@ -52,20 +61,11 @@ interface ContextFile {
     language: string;
 }
 ```
-```
-
-## Requirements
-
-- Visual Studio Code version 1.96.0 or higher
 
 ## Known Issues
 
-None reported. Please submit issues on our GitHub repository.
+No known issues for now. Please submit issues on our GitHub repository.
 
-## Contributing
+## Support Me
 
-Feel free to submit pull requests or create issues for bugs and feature requests.
-
-## License
-
-MIT
+If you find this extension helpful, consider supporting me by starring the repository on GitHub or sharing it with others.

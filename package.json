@@ -1,13 +1,28 @@
 {
-  "name": "copy-project-context",
-  "displayName": "Copy Project Context",
+  "name": "copy-project-context-ai",
+  "displayName": "Copy Project Context for AI",
   "description": "An easy-to-use tool for Visual Studio Code that allows you to quickly copy your project's structure and files, making it convenient to use as context for interacting with your favorite AI model or other purposes.",
   "version": "0.0.1",
+  "license": "MIT",
+  "publisher": "TheHorizonAI",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/the-horizon-dev/ai-context-vscode-extension"
+  },
   "engines": {
     "vscode": "^1.96.0"
   },
   "categories": [
-    "Other"
+    "Other",
+    "Programming Languages",
+    "Snippets"
+  ],
+  "keywords": [
+    "ai",
+    "context",
+    "copilot",
+    "chatgpt",
+    "project structure"
   ],
   "activationEvents": [
     "onStartupFinished"
