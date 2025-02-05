@@ -8,7 +8,7 @@ Explaining your project's structure, state, and technologies to an AI model can 
 
 ## Demo
 
-![Demo](assets/extension.gif)
+![Demo](https://github.com/the-horizon-dev/ai-context-vscode-extension/blob/f82adaac78887b7c1e161554ebfa82a521b95e79/assets/extension.gif)
 
 ## Features
 
