@@ -29,7 +29,7 @@
   ],
   "main": "./out/extension.js",
   "galleryBanner": {
-    "color": "#808080", 
+    "color": "#808080",
     "theme": "dark"
   },
   "icon": "assets/icon.png",
@@ -50,6 +50,10 @@
       {
         "command": "copy-project-context.removeAllFromContext",
         "title": "Remove All Files from Project Context"
+      },
+      {
+        "command": "copy-project-context.showContextList",
+        "title": "Show Files in Project Context"
       }
     ],
     "configuration": {
@@ -67,7 +71,6 @@
       "explorer/context": [
         {
           "command": "copy-project-context.addToContext",
-          "when": "explorerResourceIsFolder == false",
           "group": "navigation@9999"
         },
         {
@@ -86,7 +89,19 @@
           "group": "navigation@9999"
         }
       ]
-    }
+    },
+    "keybindings": [
+      {
+        "command": "copy-project-context.execute",
+        "key": "ctrl+shift+c",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "copy-project-context.addToContext",
+        "key": "ctrl+shift+a",
+        "when": "explorerViewletVisible"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
