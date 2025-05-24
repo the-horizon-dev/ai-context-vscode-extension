@@ -2,13 +2,29 @@ import * as vscode from "vscode";
 import * as path from "path";
 import * as fs from "fs/promises";
 import { VSCodeProjectContext, MAX_FILE_SIZE } from "./types";
-import { getProjectStructure, detectFileLanguage } from "./utils";
+import {
+  getProjectStructure,
+  detectFileLanguage,
+  getIgnoredDirs,
+  getIgnoredFiles,
+} from "./utils";
 
 export function activate(context: vscode.ExtensionContext) {
   const projectContext = new VSCodeProjectContext();
   const statusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Left
   );
+  let ignoredDirs = getIgnoredDirs();
+  let ignoredFiles = getIgnoredFiles();
+  vscode.workspace.onDidChangeConfiguration((e) => {
+    if (
+      e.affectsConfiguration("copyProjectContext.ignoredDirectories") ||
+      e.affectsConfiguration("copyProjectContext.ignoredFiles")
+    ) {
+      ignoredDirs = getIgnoredDirs();
+      ignoredFiles = getIgnoredFiles();
+    }
+  });
 
   /**
    * Update the status bar to reflect how many files are currently in context.
@@ -66,14 +82,21 @@ export function activate(context: vscode.ExtensionContext) {
   async function gatherFileUris(uri: vscode.Uri): Promise<vscode.Uri[]> {
     try {
       const stat = await fs.stat(uri.fsPath);
+      const name = path.basename(uri.fsPath);
+
       if (stat.isFile()) {
+        if (ignoredFiles.has(name) || name.startsWith(".")) {
+          return [];
+        }
         return [uri];
       } else if (stat.isDirectory()) {
-        const entries = await fs.readdir(uri.fsPath);
+        if (ignoredDirs.has(name) || name.startsWith(".")) {
+          return [];
+        }
+        const entries = await fs.readdir(uri.fsPath, { withFileTypes: true });
         let fileUris: vscode.Uri[] = [];
         for (const entry of entries) {
-          const fullPath = path.join(uri.fsPath, entry);
-          const childUri = vscode.Uri.file(fullPath);
+          const childUri = vscode.Uri.file(path.join(uri.fsPath, entry.name));
           // Recursively gather files from subdirectories.
           const childFiles = await gatherFileUris(childUri);
           fileUris = fileUris.concat(childFiles);
@@ -256,6 +279,26 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   /**
+   * "Toggle Clear After Copy" command:
+   * - Flips the `copyProjectContext.clearAfterCopy` setting.
+   */
+  const toggleClearCommand = vscode.commands.registerCommand(
+    "copy-project-context.toggleClearAfterCopy",
+    async () => {
+      const config = vscode.workspace.getConfiguration("copyProjectContext");
+      const current = config.get<boolean>("clearAfterCopy", true);
+      await config.update(
+        "clearAfterCopy",
+        !current,
+        vscode.ConfigurationTarget.Global
+      );
+      vscode.window.showInformationMessage(
+        `Clear after copy is now ${!current ? "enabled" : "disabled"}.`
+      );
+    }
+  );
+
+  /**
    * "Copy Context" command:
    * - Prompts the user to pick a workspace folder if multiple exist.
    * - Builds the project structure from the chosen workspace root.
@@ -271,7 +314,10 @@ export function activate(context: vscode.ExtensionContext) {
         if (!workspaceRoot) {
           return;
         }
-        const structure = await getProjectStructure(workspaceRoot);
+        const structure = await getProjectStructure(workspaceRoot, {
+          ignoredDirs,
+          ignoredFiles,
+        });
         let content = structure;
         if (projectContext.files.length > 0) {
           content += "\n\n# Copied Context\n";
@@ -331,6 +377,7 @@ export function activate(context: vscode.ExtensionContext) {
     removeFromContextCommand,
     removeAllFromContextCommand,
     showContextListCommand,
+    toggleClearCommand,
     copyContextCommand
   );
 }

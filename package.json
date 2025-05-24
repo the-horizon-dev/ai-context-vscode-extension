@@ -2,7 +2,7 @@
   "name": "copy-project-context-ai",
   "displayName": "Copy Project Context for AI",
   "description": "An easy-to-use tool for Visual Studio Code that allows you to quickly copy your project's structure and files, making it convenient to use as context for interacting with your favorite AI model or other purposes.",
-  "version": "0.0.9",
+  "version": "0.0.11",
   "license": "MIT",
   "publisher": "TheHorizonAI",
   "repository": {
@@ -54,6 +54,10 @@
       {
         "command": "copy-project-context.showContextList",
         "title": "Show Files in Project Context"
+      },
+      {
+        "command": "copy-project-context.toggleClearAfterCopy",
+        "title": "Toggle Clear After Copy"
       }
     ],
     "configuration": {
@@ -64,6 +68,16 @@
           "type": "boolean",
           "default": true,
           "description": "When true, automatically clear the context after copying."
+        },
+        "copyProjectContext.ignoredDirectories": {
+          "type": "array",
+          "default": ["node_modules", "dist", "out", "build", "coverage", ".git", ".vscode", ".idea"],
+          "description": "Directories that should be skipped when gathering files."
+        },
+        "copyProjectContext.ignoredFiles": {
+          "type": "array",
+          "default": ["README.md", "LICENSE", "package-lock.json", "yarn.lock", ".gitignore", ".npmignore", ".eslintrc.json", ".prettierrc"],
+          "description": "Files that should be skipped when gathering files."
         }
       }
     },
@@ -112,14 +126,14 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/vscode": "^1.96.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "20.x",
+    "@types/vscode": "^1.96.0",
     "@typescript-eslint/eslint-plugin": "^8.17.0",
     "@typescript-eslint/parser": "^8.17.0",
-    "eslint": "^9.16.0",
-    "typescript": "^5.7.2",
     "@vscode/test-cli": "^0.0.10",
-    "@vscode/test-electron": "^2.4.1"
+    "@vscode/test-electron": "^2.4.1",
+    "eslint": "^9.16.0",
+    "typescript": "^5.7.2"
   }
 }

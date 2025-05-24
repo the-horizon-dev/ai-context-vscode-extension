@@ -1,7 +1,8 @@
 import * as fs from "fs/promises";
 import * as path from "path";
+import * as vscode from "vscode";
 
-export const ignoredDirs = new Set([
+export const defaultIgnoredDirs = [
   "node_modules",
   "dist",
   "out",
@@ -10,9 +11,9 @@ export const ignoredDirs = new Set([
   ".git",
   ".vscode",
   ".idea",
-]);
+];
 
-export const ignoredFiles = new Set([
+export const defaultIgnoredFiles = [
   "README.md",
   "LICENSE",
   "package-lock.json",
@@ -21,11 +22,33 @@ export const ignoredFiles = new Set([
   ".npmignore",
   ".eslintrc.json",
   ".prettierrc",
-]);
+];
+
+export function getIgnoredDirs(): Set<string> {
+  const user = vscode.workspace
+    .getConfiguration("copyProjectContext")
+    .get<string[]>("ignoredDirectories", []);
+  return new Set([...defaultIgnoredDirs, ...user]);
+}
+
+export function getIgnoredFiles(): Set<string> {
+  const user = vscode.workspace
+    .getConfiguration("copyProjectContext")
+    .get<string[]>("ignoredFiles", []);
+  return new Set([...defaultIgnoredFiles, ...user]);
+}
+
+export interface StructureOptions {
+  ignoredDirs?: Set<string>;
+  ignoredFiles?: Set<string>;
+}
 
 export async function getProjectStructure(
-  workspaceRoot: string
+  workspaceRoot: string,
+  options: StructureOptions = {}
 ): Promise<string> {
+  const ignoredDirs = options.ignoredDirs ?? getIgnoredDirs();
+  const ignoredFiles = options.ignoredFiles ?? getIgnoredFiles();
   const rootFolderName = path.basename(workspaceRoot);
   const structure: string[] = [
     "# Project Structure",
