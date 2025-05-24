@@ -1,5 +1,24 @@
 # Change Log
 
+## [0.0.11] - 2025-02-07
+
+### Added
+- **Custom Ignore Lists:** New settings `copyProjectContext.ignoredDirectories` and `copyProjectContext.ignoredFiles` allow customization of skipped paths.
+- **Hidden Files Test:** Added a test ensuring hidden files are ignored.
+
+### Fixed
+- **Package Version Sync:** Updated `package-lock.json` to match extension version.
+
+## [0.0.10] - 2025-02-06
+
+### Added
+- **Toggle Clear After Copy:** New command `copy-project-context.toggleClearAfterCopy` toggles whether the context is cleared automatically after copying.
+
+### Fixed
+- **Ignore Lists When Adding Folders:** The extension now skips files and directories like `node_modules` and `.git` when adding folders to the context.
+
+---
+
 ## [0.0.9] - 2025-02-05
 
 ### Added

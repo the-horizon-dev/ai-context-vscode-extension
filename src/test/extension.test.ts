@@ -94,4 +94,58 @@ suite('Copy Project Context Extension', () => {
         // TS snippet should contain the correct content
         assert.ok(clipboardContent.includes('const x: number = 1;'), 'TS file content should appear');
     });
+
+    /**
+     * NEW TEST #3:
+     * Verifies that ignored directories are skipped when adding a folder.
+     */
+    test('Add folder skips ignored directories', async () => {
+        const folder = path.join(testWorkspace, 'folder');
+        const nodeModules = path.join(folder, 'node_modules');
+        await fs.mkdir(nodeModules, { recursive: true });
+        await fs.writeFile(path.join(nodeModules, 'ignored.ts'), 'const a = 1;');
+        await fs.writeFile(path.join(folder, 'keep.ts'), 'const keep = true;');
+
+        await vscode.commands.executeCommand('copy-project-context.addToContext', vscode.Uri.file(folder));
+        await vscode.commands.executeCommand('copy-project-context.execute');
+        const clipboardContent = await vscode.env.clipboard.readText();
+
+        assert.ok(clipboardContent.includes('keep.ts'), 'File inside folder should be included');
+        assert.ok(!clipboardContent.includes('ignored.ts'), 'Files in node_modules should be ignored');
+    });
+
+    /**
+     * NEW TEST #4:
+     * Ensures toggle command flips clearAfterCopy setting.
+     */
+    test('Toggle clearAfterCopy setting', async () => {
+        const config = vscode.workspace.getConfiguration('copyProjectContext');
+        await config.update('clearAfterCopy', true, vscode.ConfigurationTarget.Global);
+
+        await vscode.commands.executeCommand('copy-project-context.toggleClearAfterCopy');
+        let value = config.get<boolean>('clearAfterCopy');
+        assert.strictEqual(value, false, 'Setting should toggle to false');
+
+        await vscode.commands.executeCommand('copy-project-context.toggleClearAfterCopy');
+        value = config.get<boolean>('clearAfterCopy');
+        assert.strictEqual(value, true, 'Setting should toggle back to true');
+    });
+
+    /**
+     * NEW TEST #5:
+     * Verifies that hidden files are ignored when adding a folder.
+     */
+    test('Add folder skips hidden files', async () => {
+        const folder = path.join(testWorkspace, 'hidden');
+        await fs.mkdir(folder, { recursive: true });
+        await fs.writeFile(path.join(folder, '.secret.ts'), 'const secret = true;');
+        await fs.writeFile(path.join(folder, 'visible.ts'), 'const visible = true;');
+
+        await vscode.commands.executeCommand('copy-project-context.addToContext', vscode.Uri.file(folder));
+        await vscode.commands.executeCommand('copy-project-context.execute');
+        const clipboardContent = await vscode.env.clipboard.readText();
+
+        assert.ok(clipboardContent.includes('visible.ts'), 'Visible file should be included');
+        assert.ok(!clipboardContent.includes('.secret.ts'), 'Hidden files should be ignored');
+    });
 });

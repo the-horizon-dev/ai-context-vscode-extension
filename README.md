@@ -25,6 +25,9 @@ Explaining your project's structure, state, and technologies to an AI model can 
 
 - **Bulk Copy**: Right-click any folder to "Copy Project Context" and get all selected files formatted and ready to paste.
 - **Clean Output**: Files are wrapped in appropriate language code blocks, perfect for documentation or AI interactions.
+- **Ignore Common Directories**: When adding folders, directories such as `node_modules` and `.git` are skipped automatically.
+- **Toggle Clear After Copy**: Use the `Toggle Clear After Copy` command to switch automatic clearing on or off.
+- **Custom Ignore Lists**: Configure `copyProjectContext.ignoredDirectories` and `copyProjectContext.ignoredFiles` to fine-tune which paths are skipped.
 
 ## Usage
 
@@ -46,6 +49,12 @@ Explaining your project's structure, state, and technologies to an AI model can 
 4. **Pasting**:
    - Use Ctrl+V (Cmd+V on macOS) anywhere to paste your formatted context.
    - Each file will be properly formatted with language-specific code blocks.
+5. **Toggling Auto-Clear**:
+   - Open the Command Palette and run `Toggle Clear After Copy`.
+   - The setting switches between clearing the context automatically or keeping it.
+6. **Adjusting Ignore Lists**:
+   - Open Settings and search for `Copy Project Context`.
+   - Edit **Ignored Directories** and **Ignored Files** to customize which paths are excluded.
 
 ```markdown
 # Project Structure
