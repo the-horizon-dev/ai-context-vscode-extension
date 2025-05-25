@@ -14,17 +14,7 @@ export function activate(context: vscode.ExtensionContext) {
   const statusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Left
   );
-  let ignoredDirs = getIgnoredDirs();
-  let ignoredFiles = getIgnoredFiles();
-  vscode.workspace.onDidChangeConfiguration((e) => {
-    if (
-      e.affectsConfiguration("copyProjectContext.ignoredDirectories") ||
-      e.affectsConfiguration("copyProjectContext.ignoredFiles")
-    ) {
-      ignoredDirs = getIgnoredDirs();
-      ignoredFiles = getIgnoredFiles();
-    }
-  });
+
 
   /**
    * Update the status bar to reflect how many files are currently in context.
@@ -79,7 +69,11 @@ export function activate(context: vscode.ExtensionContext) {
    * Recursively gathers all file URIs under a given folder.
    * If the URI is a file, returns an array containing just that URI.
    */
-  async function gatherFileUris(uri: vscode.Uri): Promise<vscode.Uri[]> {
+  async function gatherFileUris(
+    uri: vscode.Uri,
+    ignoredDirs: Set<string>,
+    ignoredFiles: Set<string>
+  ): Promise<vscode.Uri[]> {
     try {
       const stat = await fs.stat(uri.fsPath);
       const name = path.basename(uri.fsPath);
@@ -98,7 +92,7 @@ export function activate(context: vscode.ExtensionContext) {
         for (const entry of entries) {
           const childUri = vscode.Uri.file(path.join(uri.fsPath, entry.name));
           // Recursively gather files from subdirectories.
-          const childFiles = await gatherFileUris(childUri);
+          const childFiles = await gatherFileUris(childUri, ignoredDirs, ignoredFiles);
           fileUris = fileUris.concat(childFiles);
         }
         return fileUris;
@@ -139,8 +133,12 @@ export function activate(context: vscode.ExtensionContext) {
         // Gather all file URIs from the selection, expanding folders recursively.
         let allFileUris: vscode.Uri[] = [];
         for (const uri of uris) {
-          const files = await gatherFileUris(uri);
-          allFileUris = allFileUris.concat(files);
+          const folder = vscode.workspace.getWorkspaceFolder(uri);
+          const root = folder?.uri.fsPath;
+          const dirs = getIgnoredDirs(root);
+          const files = getIgnoredFiles(root);
+          const gathered = await gatherFileUris(uri, dirs, files);
+          allFileUris = allFileUris.concat(gathered);
         }
         // Remove duplicates based on the file path.
         const uniqueFiles = Array.from(
@@ -314,10 +312,7 @@ export function activate(context: vscode.ExtensionContext) {
         if (!workspaceRoot) {
           return;
         }
-        const structure = await getProjectStructure(workspaceRoot, {
-          ignoredDirs,
-          ignoredFiles,
-        });
+        const structure = await getProjectStructure(workspaceRoot);
         let content = structure;
         if (projectContext.files.length > 0) {
           content += "\n\n# Copied Context\n";

@@ -1,0 +1,4 @@
+{
+  "ignoredDirectories": ["dist"],
+  "ignoredFiles": ["CHANGELOG.md"]
+}

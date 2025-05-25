@@ -1,4 +1,5 @@
 import * as fs from "fs/promises";
+import { existsSync, readFileSync } from "fs";
 import * as path from "path";
 import * as vscode from "vscode";
 
@@ -24,18 +25,48 @@ export const defaultIgnoredFiles = [
   ".prettierrc",
 ];
 
-export function getIgnoredDirs(): Set<string> {
+export const CONFIG_FILE_NAME = ".copy-project-context.json";
+
+export interface ExtensionConfig {
+  ignoredDirectories?: string[];
+  ignoredFiles?: string[];
+}
+
+export function readConfigFile(workspaceRoot: string): ExtensionConfig {
+  try {
+    const configPath = path.join(workspaceRoot, CONFIG_FILE_NAME);
+    if (!existsSync(configPath)) {
+      return {};
+    }
+    const raw = readFileSync(configPath, "utf8");
+    const parsed = JSON.parse(raw);
+    return {
+      ignoredDirectories: Array.isArray(parsed.ignoredDirectories)
+        ? parsed.ignoredDirectories
+        : [],
+      ignoredFiles: Array.isArray(parsed.ignoredFiles)
+        ? parsed.ignoredFiles
+        : [],
+    };
+  } catch {
+    return {};
+  }
+}
+
+export function getIgnoredDirs(workspaceRoot?: string): Set<string> {
   const user = vscode.workspace
     .getConfiguration("copyProjectContext")
     .get<string[]>("ignoredDirectories", []);
-  return new Set([...defaultIgnoredDirs, ...user]);
+  const file = workspaceRoot ? readConfigFile(workspaceRoot).ignoredDirectories ?? [] : [];
+  return new Set([...defaultIgnoredDirs, ...user, ...file]);
 }
 
-export function getIgnoredFiles(): Set<string> {
+export function getIgnoredFiles(workspaceRoot?: string): Set<string> {
   const user = vscode.workspace
     .getConfiguration("copyProjectContext")
     .get<string[]>("ignoredFiles", []);
-  return new Set([...defaultIgnoredFiles, ...user]);
+  const file = workspaceRoot ? readConfigFile(workspaceRoot).ignoredFiles ?? [] : [];
+  return new Set([...defaultIgnoredFiles, ...user, ...file]);
 }
 
 export interface StructureOptions {
@@ -47,8 +78,8 @@ export async function getProjectStructure(
   workspaceRoot: string,
   options: StructureOptions = {}
 ): Promise<string> {
-  const ignoredDirs = options.ignoredDirs ?? getIgnoredDirs();
-  const ignoredFiles = options.ignoredFiles ?? getIgnoredFiles();
+  const ignoredDirs = options.ignoredDirs ?? getIgnoredDirs(workspaceRoot);
+  const ignoredFiles = options.ignoredFiles ?? getIgnoredFiles(workspaceRoot);
   const rootFolderName = path.basename(workspaceRoot);
   const structure: string[] = [
     "# Project Structure",
