@@ -51,5 +51,22 @@ suite('Utils Tests', () => {
             const structure = await getProjectStructure(testWorkspace);
             assert.ok(!structure.includes('README.md'));
         });
+
+        test('respects config file', async () => {
+            const config = {
+                ignoredDirectories: ['custom'],
+                ignoredFiles: ['ignore.txt']
+            };
+            await fs.writeFile(
+                path.join(testWorkspace, '.copy-project-context.json'),
+                JSON.stringify(config)
+            );
+            await fs.mkdir(path.join(testWorkspace, 'custom'), { recursive: true });
+            await fs.writeFile(path.join(testWorkspace, 'ignore.txt'), '');
+
+            const structure = await getProjectStructure(testWorkspace);
+            assert.ok(!structure.includes('custom'));
+            assert.ok(!structure.includes('ignore.txt'));
+        });
     });
 });

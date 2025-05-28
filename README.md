@@ -28,6 +28,7 @@ Explaining your project's structure, state, and technologies to an AI model can 
 - **Ignore Common Directories**: When adding folders, directories such as `node_modules` and `.git` are skipped automatically.
 - **Toggle Clear After Copy**: Use the `Toggle Clear After Copy` command to switch automatic clearing on or off.
 - **Custom Ignore Lists**: Configure `copyProjectContext.ignoredDirectories` and `copyProjectContext.ignoredFiles` to fine-tune which paths are skipped.
+- **Workspace Config File**: Place a `.copy-project-context.json` file in your project to share ignore settings with your team.
 
 ## Usage
 
@@ -55,6 +56,8 @@ Explaining your project's structure, state, and technologies to an AI model can 
 6. **Adjusting Ignore Lists**:
    - Open Settings and search for `Copy Project Context`.
    - Edit **Ignored Directories** and **Ignored Files** to customize which paths are excluded.
+7. **Workspace Config File**:
+   - Add a `.copy-project-context.json` file at your project root to provide team-wide ignore settings.
 
 ```markdown
 # Project Structure
